@@ -33,6 +33,7 @@ int main(int argc, char **argv, char **env) {
   // run simulation for MAX_SIM_CYC clock cycles
   for (simcyc=0; simcyc<MAX_SIM_CYC; simcyc++) {
     // dump variables into VCD file and toggle clock
+    top->rst = (simcyc < 2);
     for (tick=0; tick<2; tick++) {
       tfp->dump (2*simcyc+tick);
       top->clk = !top->clk;
@@ -41,14 +42,16 @@ int main(int argc, char **argv, char **env) {
 
     //Display toggle neopixel
     if (top->tick) {
-      vbdBar(lights);
-      lights = lights ^ 0xFF;
+      // vbdBar(lights);
+      // lights = lights ^ 0xFF;
+      vbdBar(top->out & 0xFF);
+
     }
 
     
 
     // set up input signals of testbench
-    top->rst = (simcyc < 2);    // assert reset for 1st cycle
+    // assert reset for 1st cycle
     top->en = (simcyc > 2);
     top->N = vbdValue();
     vbdCycle(simcyc);
